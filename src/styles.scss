@@ -1,1 +1,57 @@
 /* You can add global styles to this file, and also import other style files */
+
+document {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background-image: url('./assets/images/blured.jpg');;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  backdrop-filter: blur(75px);
+}
+html, body { min-height: 100%; min-width:100%}
+// body {
+//   margin: 0;
+//   font-family: Roboto, "Helvetica Neue", sans-serif;
+//   background-image: url('./assets/images/blured.jpg');
+//   background-repeat: no-repeat;
+//   background-size: cover;
+//   background-attachment: fixed;
+//   backdrop-filter: blur(75px);
+// }
+html{
+  min-height:50%;
+  min-width: 100%;
+}
+body {
+    // min-height:100%;
+    min-width: 100%;
+    min-height: 100vh
+}
+
+body {
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+    background-image: url('./assets/images/blured.jpg');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: 100%;
+    backdrop-filter: blur(75px);
+    // backdrop-filter: drop-shadow(40px 40px 100px blue);
+    // backdrop-filter: grayscale(10%);
+    // backdrop-filter: invert(90%);
+    // backdrop-filter: saturate(80%);
+    // backdrop-filter: hue-rotate(120deg);
+    // backdrop-filter: contrast(10%);
+    // backdrop-filter: sepia(50%);
+    // backdrop-filter: brightness(80%);
+}
+
+ a {color:#fff;
+text-decoration: none;
+font-weight: normal;
+&:hover{
+    text-decoration: underline;
+}
+}
+
