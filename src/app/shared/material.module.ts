@@ -11,6 +11,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import{ MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 
+
 @NgModule({
 
   exports: [
@@ -24,7 +25,8 @@ import{ MatProgressSpinnerModule} from '@angular/material/progress-spinner';
     MatCheckboxModule,
     MatRadioModule,
     MatInputModule,
-    MatProgressSpinnerModule,
+    MatProgressSpinnerModule
+
 
   ]
 })
