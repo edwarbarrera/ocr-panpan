@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable, map, startWith, tap } from 'rxjs';
 import { ComplexFormService } from '../../services/complex-form.service';
+import { validValidator } from '../../validators/valid.validator';
+import { confirmEqualValidator } from '../../validators/confirm-equal.validator';
 
 @Component({
   selector: 'app-complex-form',
@@ -23,8 +25,11 @@ export class ComplexFormComponent implements OnInit {
   passwordCtrl!: FormControl;
   confirmPasswordCtrl!: FormControl;
   loginInfoForm!: FormGroup;
+
   showEmailCtrl$!: Observable<boolean>;
   showPhoneCtrl$!: Observable<boolean>;
+  showEmailError$!: Observable<boolean>;
+  showPasswordError$!: Observable<boolean>;
 
 
 
@@ -51,7 +56,7 @@ export class ComplexFormComponent implements OnInit {
       tap(showEmailCtrl => {
         this.setEmailValidators(showEmailCtrl)
       })
-    )
+    );
     this.showPhoneCtrl$ = this.contactPrefenceCtrl.valueChanges.pipe(
       startWith(this.contactPrefenceCtrl.value),
       map(preference => preference === 'phone'),
@@ -59,11 +64,22 @@ export class ComplexFormComponent implements OnInit {
         this.setPhoneValidators(showPhoneCtrl)
       })
     );
+    this.showEmailError$ = this.emailForm.statusChanges.pipe(
+      map(status => status === 'INVALID' &&
+        this.emailCtrl.value &&
+        this.confirmEmailCtrl.value)
+    );
+    this.showPasswordError$ = this.loginInfoForm.statusChanges.pipe(
+      map(status => status === 'INVALID' &&
+      this.passwordCtrl.value &&
+      this.confirmPasswordCtrl.value &&
+      this.loginInfoForm.hasError('confirmEqual')
+    ))
   }
 
   private setEmailValidators(showEmailCtrl: boolean) {
     if (showEmailCtrl) {
-      this.emailCtrl.addValidators([Validators.required, Validators.email])
+      this.emailCtrl.addValidators([Validators.required, Validators.email, validValidator()])
       this.confirmEmailCtrl.addValidators([Validators.required, Validators.email])
     } else {
       this.confirmEmailCtrl.clearValidators();
@@ -89,13 +105,20 @@ export class ComplexFormComponent implements OnInit {
         firstName: ['', Validators.required],
         lastName: ['', Validators.required],
       });
+
     this.contactPrefenceCtrl = this.fb.control('email');
+
     this.emailCtrl = this.fb.control('');
     this.confirmEmailCtrl = this.fb.control('');
+
     this.emailForm = this.fb.group({
       email: this.emailCtrl,
       confirm: this.confirmEmailCtrl
+    }, {
+      validators: [confirmEqualValidator('email', 'confirm')]
+
     });
+
     this.phoneCtrl = this.fb.control('');
 
     this.passwordCtrl = this.fb.control('', Validators.required);
@@ -105,6 +128,9 @@ export class ComplexFormComponent implements OnInit {
       username: ['', Validators.required],
       password: this.passwordCtrl,
       confirmPassword: this.confirmPasswordCtrl
+    }
+    , {
+      validators: [confirmEqualValidator('password', 'confirmPassword')],
     });
   }
 
@@ -125,21 +151,23 @@ export class ComplexFormComponent implements OnInit {
     this.loading = true;
     this.complexFormService.saveUserInfo(this.mainForm.value).pipe(
 
-      tap(saved => {
+      tap(sav => {
         this.loading = false;
-        if (saved) {
+        if (sav) {
           this.resetForm();
         } else {
           console.error('echec dans le bec')
         }
-      })
+
+      }
+      )
     ).subscribe();
   }
 
 
   private resetForm() {
     this.mainForm.reset();
-    this.contactPrefenceCtrl.patchValue('email',);//{emitEvent:false}
+    this.contactPrefenceCtrl.patchValue('email',);//('email',{emitEvent:false})
   }
 
   getFormErrorText(ctrl: AbstractControl) {
@@ -148,6 +176,8 @@ export class ComplexFormComponent implements OnInit {
     }
     else if (ctrl.hasError('email')) {
       return 'ce champs doit être un email valide';
+    }else if (ctrl.hasError('validValidator')) {
+      return 'il manque des quetrus genre VladLead';
     }
     else if (ctrl.hasError('minlength')) {
       return 'il manque des quetrus';
