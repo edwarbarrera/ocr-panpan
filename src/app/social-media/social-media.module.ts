@@ -7,6 +7,7 @@ import { PostsResolver } from './resolver/posts.resolver';
 import { PostListComponent } from './components/post-list/post-list.component';
 import { PostListItemComponent } from './components/post-list-item/post-list-item.component';
 import { SharedModule } from '../shared/shared.module';
+import { provideRouter } from '@angular/router';
 
 
 @NgModule({
@@ -21,7 +22,8 @@ import { SharedModule } from '../shared/shared.module';
   ],
   providers:[
     PostsService,
-    PostsResolver,
+    provideRouter([{path: '',  component:PostListComponent,  resolve:{ posts: PostsResolver },}]),
+    // PostsResolver,
   ]
 })
 export class SocialMediaModule { }

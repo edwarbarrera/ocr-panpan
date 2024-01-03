@@ -4,11 +4,11 @@ import { Post } from '../../models/post.model';
 @Component({
   selector: 'app-post-list-item',
   templateUrl: './post-list-item.component.html',
-  styleUrls: ['./post-list-item.component.scss']
+  styleUrls: ['./post-list-item.component.scss'],
 })
 export class PostListItemComponent implements OnInit {
 
-  @Input() post!:Post
+  @Input() post!:Post;
   @Output() postCommented = new EventEmitter<{comment:string, postId: number}>();
 
   tempUser = {lastName: 'trankil', firstName:'emileloulou'};
@@ -17,7 +17,7 @@ export class PostListItemComponent implements OnInit {
   }
 
   onNewEvent(comment: string) {
-  this.postCommented.emit({comment:comment, postId: this.post.id})
+  this.postCommented.emit({comment:comment, postId: this.post.id});
 
     }
 

@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CandidatesService } from '../../services/candidate.service';
 import { Candidate } from '../../models/candidate.model';
-import { Observable, switchMap } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
+import { Observable, switchMap, take, tap } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-single-candidate',
@@ -15,7 +15,9 @@ export class SingleCandidateComponent {
   loading$!: Observable<boolean>;
   candidate$!: Observable<Candidate>;
 
-  constructor(private candidatesService: CandidatesService, private route: ActivatedRoute) { }
+  constructor(private candidatesService: CandidatesService,
+    private route: ActivatedRoute,
+    private router: Router) { }
 
   ngOnInit(): void {
     this.initObservables();
@@ -27,7 +29,28 @@ export class SingleCandidateComponent {
       switchMap(params => this.candidatesService.getCandidateById(+params['id']))
     );
   }
-  onHire() { }
-  onRefuse() { }
-  onGoBack() { }
+
+  onHire() {
+    this.candidate$.pipe(
+      take(1),
+      tap(candidate => {
+        this.candidatesService.hireCandidate(candidate.id),
+        this.onGoBack();
+      })
+    ).subscribe();
+  }
+
+  onRefuse() {
+    this.candidate$.pipe(
+      take(1),
+      tap(candidate => {
+        this.candidatesService.refuseCandidate(candidate.id);
+        this.onGoBack();
+      })
+    ).subscribe();
+  }
+
+  onGoBack() {
+    this.router.navigateByUrl('reactive-state/candidates');
+  }
 }
